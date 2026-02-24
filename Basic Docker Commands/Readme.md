@@ -26,21 +26,9 @@ Access is controlled via IAM and RBAC. Only limited admin users have Docker priv
 
 ## 2️⃣ Verify Docker Daemon is Running
 
-### Method 1
-
 ```bash
 systemctl status docker
-```
-
-### Method 2
-
-```bash
 sudo docker info
-```
-
-### Method 3
-
-```bash
 ps -ef | grep dockerd
 ```
 
@@ -61,183 +49,281 @@ sudo docker run ubuntu
 sudo docker run -d --name web -p 8080:80 nginx
 ```
 
-Access in browser:
+### Custom Webpage
+
+```bash
+sudo docker cp index.html web:/usr/share/nginx/html/index.html
+```
+
+Access:
 
 ```
 http://<public-ip>:8080
 ```
 
-**Explanation:**
-
-* `-d` → Run in detached mode
-* `--name` → Assign container name
-* `-p 8080:80` → Map host port 8080 to container port 80
-
 ---
 
-## 5️⃣ List, Stop, and Remove Containers
-
-### List running containers
+## 5️⃣ Container Management
 
 ```bash
 sudo docker ps
-```
-
-### List all containers (including stopped)
-
-```bash
 sudo docker ps -a
-```
-
-### Stop a container
-
-```bash
-sudo docker stop <container_name/id>
-```
-
-### Remove a stopped container
-
-```bash
-sudo docker rm <container_name/id>
-```
-
-### Remove all stopped containers
-
-```bash
+sudo docker stop <container>
+sudo docker rm <container>
+sudo docker rm -f <container>
 sudo docker container prune
-```
-
-### Remove unused images
-
-```bash
 sudo docker image prune
-```
-
-### Remove running container
-
-**Method 1 (Stop then Remove):**
-
-```bash
-sudo docker stop <container_name/id>
-sudo docker rm <container_name/id>
-```
-
-**Method 2 (Force Remove):**
-
-```bash
-sudo docker rm -f <container_name/id>
 ```
 
 ---
 
 ## 6️⃣ Image Commands
 
-### Remove image
-
-```bash
-sudo docker rmi <image_name/id>
-```
-
-### Pull image
-
-```bash
-sudo docker pull <image_name/id>
-```
-
-### List images
-
 ```bash
 sudo docker images
+sudo docker pull <image>
+sudo docker rmi <image>
 ```
 
 ---
 
-## 7️⃣ Inspect a Container
+## 7️⃣ Inspect Container & Get IP
 
 ```bash
-sudo docker inspect <container_name/id>
+sudo docker inspect <container>
+```
+
+Get only IP:
+
+```bash
+sudo docker inspect <container> --format '{{.NetworkSettings.IPAddress}}'
 ```
 
 ---
 
-## 8️⃣ Run Interactive Container
-
-**Ubuntu:**
+## 8️⃣ Interactive Container
 
 ```bash
 sudo docker run -it ubuntu /bin/bash
-```
-
-**Alpine (does not have bash):**
-
-```bash
 sudo docker run -it alpine sh
-```
-
-*Alpine doesn’t include bash by default because it is designed to be minimal and lightweight. It uses BusyBox and `/bin/sh` instead of bash to keep the image size small, reduce dependencies, and improve security. If needed, bash can be installed manually using `apk add bash`.*
-
----
-
-## 9️⃣ Execute Shell Inside Running Container
-
-```bash
-sudo docker exec -it <container_name> /bin/bash
+sudo docker exec -it <container> /bin/bash
 ```
 
 ---
 
-## 🔟 Rename a Running Container
+## 9️⃣ Logs
 
 ```bash
-sudo docker rename <old_container_name> <new_container_name>
+sudo docker logs <container>
+sudo docker logs -f <container>
+sudo docker logs --tail 50 <container>
 ```
 
 ---
 
-## 1️⃣1️⃣ Run a Container that Prints "Hello Docker" and Exits
+## 🔟 Resource Limits
+
+### Memory Limit
 
 ```bash
-sudo docker run --rm ubuntu echo "Hello Docker"
+sudo docker run -m 256m nginx
+sudo docker run --memory=256m nginx
 ```
 
-or
+### CPU + Memory Limit
 
 ```bash
-sudo docker run --rm alpine echo "Hello Docker"
+sudo docker run -d --name nginxlimited -p 8080:80 --memory="256m" --cpus="0.5" nginx
 ```
 
-`--rm` → Automatically removes the container after execution.
+Check usage (live streaming view):
+
+```bash
+sudo docker stats
+```
+
+To view one-time resource usage:
+
+```bash
+docker stats --no-stream <container_name/id>
+```
 
 ---
 
-## 1️⃣2️⃣ View Container Logs
-
-### View logs
+## 1️⃣1️⃣ Restart Policies
 
 ```bash
-sudo docker logs <container_name/id>
+sudo docker run -d --name webapp -p 8080:80 --restart=always nginx
 ```
 
-### Stream logs continuously (live view)
+Test restart:
 
 ```bash
-sudo docker logs -f <container_name/id>
+sudo systemctl restart docker
+docker ps
 ```
 
-### Show last 50 lines of logs
+Restart options:
+
+```
+--restart=no                # Default, no restart
+--restart=on-failure        # Restart only on non-zero exit
+--restart=on-failure:5      # Maximum 5 retries
+--restart=unless-stopped    # Restart unless manually stopped
+--restart=always            # Always restart
+```
+
+---
+
+## 1️⃣2️⃣ Copy Files
+
+### Host → Container
 
 ```bash
-sudo docker logs --tail 50 <container_name/id>
+sudo docker cp <host_path> <container>:<container_path>
+```
+
+### Container → Host
+
+```bash
+sudo docker cp <container>:<container_path> <host_path>
+```
+
+---
+
+## 1️⃣3️⃣ Docker Hub Login & Push
+
+```bash
+sudo docker login -u <username>
+sudo docker tag <image>:<tag> <username>/<image>:<tag>
+sudo docker push <username>/<image>:<tag>
+```
+
+Pull private image:
+
+```bash
+sudo docker login -u <username>
+sudo docker pull <username>/<image>:<tag>
+```
+
+---
+
+## 1️⃣4️⃣ Export & Import (Container Level)
+
+### Export Container (No History, No Layers)
+
+```bash
+sudo docker container export <container> -o image.tar
+```
+
+### Import as Image
+
+```bash
+sudo docker image import image.tar newimage
+```
+
+Run container from imported image:
+
+```bash
+sudo docker run --name mycontainer newimage
+```
+
+### Explanation
+
+* `docker export` exports a container’s filesystem (current state) into a `.tar` file.
+* `docker import` creates a new image from that exported `.tar` file.
+* Works on **containers**, not images.
+* Does **not** preserve image layers, history, metadata (environment variables, CMD, ENTRYPOINT, tags).
+* Useful for:
+
+  * Sharing container’s current state
+  * Moving container filesystem to another host
+  * Taking container filesystem backup
+
+---
+
+## 1️⃣5️⃣ Save & Load (Image Level)
+
+### Save Image (With Layers & History)
+
+```bash
+sudo docker save -o image.tar imagename:tag
+```
+
+### Transfer to Another Server
+
+Generate SSH key and copy to target server’s `authorized_keys`.
+
+```bash
+scp image.tar user@privateip:/home/user
+```
+
+Ensure Docker is installed on the target server.
+
+### Load Image on Target Server
+
+```bash
+sudo docker load -i image.tar
+```
+
+### Explanation
+
+* `docker save` saves a Docker image into a `.tar` file.
+* `docker load` loads the image back from the `.tar` file.
+* Works on **images**, not running containers.
+* Preserves:
+
+  * Image layers
+  * Tags
+  * History
+* Perfect for transferring images exactly as they are.
+
+---
+
+# 🔍 Difference: Export vs Save
+
+| Feature            | docker export               | docker save             |
+| ------------------ | --------------------------- | ----------------------- |
+| Works On           | Container                   | Image                   |
+| Keeps Layers       | ❌ No                        | ✅ Yes                   |
+| Keeps History      | ❌ No                        | ✅ Yes                   |
+| Preserves Metadata | ❌ No                        | ✅ Yes                   |
+| Use Case           | Container filesystem backup | Image backup & transfer |
+
+`docker import` is used with `export`
+`docker load` is used with `save`
+
+---
+
+# 🧹 Dangling Images
+
+Dangling images are Docker images that:
+
+* Have `<none>` as repository and tag
+* Are not used by any container
+* Usually created during builds (intermediate layers)
+* Consume disk space but are not useful for running containers
+
+Check dangling images:
+
+```bash
+sudo docker images -f dangling=true
+```
+
+Remove dangling images:
+
+```bash
+sudo docker image prune
 ```
 
 ---
 
 # 📌 Production Notes
 
-* Avoid giving direct Docker access to users.
-* Use CI/CD pipelines for deployments.
-* Use container orchestration tools.
-* Control access using IAM and RBAC.
-* Follow the principle of least privilege.
+* Avoid direct Docker access
+* Use CI/CD pipelines
+* Use orchestration tools
+* Follow IAM & RBAC
+* Apply least privilege principle
 
 ---
