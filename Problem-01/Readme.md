@@ -173,6 +173,7 @@ sudo docker run -it ubuntu /bin/bash
 ```bash
 sudo docker run -it alpine sh
 ```
+*Alpine doesn’t include bash by default because it is designed to be minimal and lightweight. It uses BusyBox and /bin/sh instead of bash to keep the image size small, reduce dependencies, and improve security. If needed, bash can be installed manually using apk add bash.
 
 ---
 
@@ -201,5 +202,3 @@ sudo docker rename <old_container_name> <new_container_name>
 * Follow the principle of least privilege.
 
 ---
-
-**Author:** DevOps Practice Notes
