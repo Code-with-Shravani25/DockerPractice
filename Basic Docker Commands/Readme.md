@@ -27,9 +27,9 @@ Access is controlled via IAM and RBAC. Only limited admin users have Docker priv
 ## 2️⃣ Verify Docker Daemon is Running
 
 ```bash
-systemctl status docker
-sudo docker info
-ps -ef | grep dockerd
+systemctl status docker //Method1
+sudo docker info //Method2
+ps -ef | grep dockerd //Method3
 ```
 
 ---
