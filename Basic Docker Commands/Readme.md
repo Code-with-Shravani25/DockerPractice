@@ -173,7 +173,8 @@ sudo docker run -it ubuntu /bin/bash
 ```bash
 sudo docker run -it alpine sh
 ```
-*Alpine doesn’t include bash by default because it is designed to be minimal and lightweight. It uses BusyBox and /bin/sh instead of bash to keep the image size small, reduce dependencies, and improve security. If needed, bash can be installed manually using apk add bash.
+
+*Alpine doesn’t include bash by default because it is designed to be minimal and lightweight. It uses BusyBox and `/bin/sh` instead of bash to keep the image size small, reduce dependencies, and improve security. If needed, bash can be installed manually using `apk add bash`.*
 
 ---
 
@@ -189,6 +190,44 @@ sudo docker exec -it <container_name> /bin/bash
 
 ```bash
 sudo docker rename <old_container_name> <new_container_name>
+```
+
+---
+
+## 1️⃣1️⃣ Run a Container that Prints "Hello Docker" and Exits
+
+```bash
+sudo docker run --rm ubuntu echo "Hello Docker"
+```
+
+or
+
+```bash
+sudo docker run --rm alpine echo "Hello Docker"
+```
+
+`--rm` → Automatically removes the container after execution.
+
+---
+
+## 1️⃣2️⃣ View Container Logs
+
+### View logs
+
+```bash
+sudo docker logs <container_name/id>
+```
+
+### Stream logs continuously (live view)
+
+```bash
+sudo docker logs -f <container_name/id>
+```
+
+### Show last 50 lines of logs
+
+```bash
+sudo docker logs --tail 50 <container_name/id>
 ```
 
 ---
