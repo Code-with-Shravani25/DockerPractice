@@ -1,0 +1,47 @@
+#Install and verify docker
+sudo apt update
+sudo apt install docker.io -y
+docker --version
+
+You can add user to docker group to give root priviledges but not recommended. to add sudo usermod -aG docker <username>
+In production we don’t allow direct Docker access. We use CI/CD pipelines and container orchestration like Kubernetes or ECS. Access is controlled via IAM and RBAC. Only limited admin users have Docker privileges.
+
+#To verify docker daemon is running or not
+Method 1: systemctl status docker
+Method 2: sudo docker info
+Method 3: ps -ef | grep dockerd
+
+#Pull and run a container
+sudo docker pull ubuntu
+sudo docker run ubuntu
+
+#Create and run a nginx container in detached mode and expose it on port 8008 and verify its running
+sudo docker run -d --name web -p 8080:80 nginx
+Test: http://<publicip>:8080
+
+#List,stop and remove cpntainers
+1. List all running containers: sudo docker ps
+2. List all containers including stopped ones: sudo docker ps -s
+3. Stop a running container: sudo docker stop <container_name/id>
+4. Remove the stopped container: sudo docker rm <container_name/id>
+5. Remove all the stopped container: sudo container prune
+6. Remove unused images: sudo image prune 
+7. Remove running container: 
+   Method1: #First stop and then remove
+   sudo docker stop <container_name/id>
+   sudo docker rm <container_name/id>
+   Method2: Remove forcefully
+   sudo docker rm -f <<container_name/id>
+8. Remove image: sudo docker rmi <image_name/id>
+9. Pull an image: sudo docker pull <image_name/id>
+10. List images: sudo docker images
+11. Inspect a container: sudo docker inspect <container_name/id>
+
+#Run interactive container
+sud docker run -d -it ubuntu /bin/bash //if using alpine then use sh it doesnot have bash
+
+#Open a bash shell inside an already running container
+sudo docker exec -it ubuntu /bin/bash
+
+#Rename a running container
+sudo docker rename <old_container_name> <new_container_name>
