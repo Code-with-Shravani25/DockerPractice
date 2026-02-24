@@ -66,13 +66,13 @@ http://<public-ip>:8080
 ## 5️⃣ Container Management
 
 ```bash
-sudo docker ps
-sudo docker ps -a
+sudo docker ps #Show running containers
+sudo docker ps -a #Show all containers including the stopped ones
 sudo docker stop <container>
-sudo docker rm <container>
-sudo docker rm -f <container>
-sudo docker container prune
-sudo docker image prune
+sudo docker rm <container> #remove stopped container
+sudo docker rm -f <container> #Forcefully remove a running container
+sudo docker container prune #Remove all stopped container
+sudo docker image prune #Remove unused images
 ```
 
 ---
@@ -82,7 +82,7 @@ sudo docker image prune
 ```bash
 sudo docker images
 sudo docker pull <image>
-sudo docker rmi <image>
+sudo docker rmi <image> #Remove an image
 ```
 
 ---
@@ -105,8 +105,8 @@ sudo docker inspect <container> --format '{{.NetworkSettings.IPAddress}}'
 
 ```bash
 sudo docker run -it ubuntu /bin/bash
-sudo docker run -it alpine sh
-sudo docker exec -it <container> /bin/bash
+sudo docker run -it alpine sh #alpine has only sh has its lightweight there's no bash shell
+sudo docker exec -it <container> /bin/bash #Enter inside a running container
 ```
 
 ---
@@ -115,8 +115,8 @@ sudo docker exec -it <container> /bin/bash
 
 ```bash
 sudo docker logs <container>
-sudo docker logs -f <container>
-sudo docker logs --tail 50 <container>
+sudo docker logs -f <container> #Stream logs
+sudo docker logs --tail 50 <container> #Last 50 lines
 ```
 
 ---
@@ -153,7 +153,7 @@ docker stats --no-stream <container_name/id>
 ## 1️⃣1️⃣ Restart Policies
 
 ```bash
-sudo docker run -d --name webapp -p 8080:80 --restart=always nginx
+sudo docker run -d --name webapp -p 8080:80 --restart=always nginx #always restarts if daemon restarted or crashed
 ```
 
 Test restart:
