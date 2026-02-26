@@ -1,3 +1,4 @@
+#Create a Dockerfile to run a java-Maven Application
 FROM alpine/git AS clone
 WORKDIR /app
 RUN git clone https://github.com/Code-with-Shravani25/java-maven-code.git
