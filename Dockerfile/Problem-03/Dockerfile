@@ -5,7 +5,7 @@ WORKDIR /app
 RUN addgroup -S appgroup #addgroup and adduser in alpine and -S means creates system user used for running services and applications and they dont have home directory.
 RUN adduser -S appuser -G appgroup
 RUN chown -R appuser:appgroup /app
-USER appuser
+USER appuser #used to switch the user
 CMD ["sh","-c","whoami && id"]
 
 #Method - 2
