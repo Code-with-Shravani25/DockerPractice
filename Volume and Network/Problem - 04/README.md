@@ -5,6 +5,7 @@
 - Create a custom Docker network
 - Run two containers in the same network
 - Verify communication between containers using container name
+- This is an example to expose a container internally but not to the host, as we are not connecting to host port.
 
 ---
 
