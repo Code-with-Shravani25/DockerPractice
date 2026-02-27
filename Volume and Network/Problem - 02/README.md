@@ -69,8 +69,8 @@ sudo docker run --rm \
 ## 🔎 Command Explanation
 
 - `--rm` → Remove container automatically after completion  
-- `-v myvolume:/volume` → Mount Docker volume  
-- `-v $(pwd):/backup` → Mount current host directory  
+- `-v myvolume:/volume` → Mount Docker volume it is mounting on host at location /var/lib/docker/voumes/myvolume/_data -> /volume
+- `-v $(pwd):/backup` → Mount current host directory , -v here we used to mount the location for ex: /home/ubuntu mounting to /backup inside the container. 
 - `tar czf` → Create compressed archive  
 - `/backup/myvolume-backup.tar.gz` → Backup file name  
 - `-C /volume .` → Archive all volume contents  
