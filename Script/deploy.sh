@@ -1,3 +1,5 @@
+#Write a script to build docker image, run a container and check application health
+
 #!/bin/bash
 
 # Variables
